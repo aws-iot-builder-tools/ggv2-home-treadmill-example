@@ -1,0 +1,35 @@
+---
+RecipeFormatVersion: "2020-01-25"
+ComponentName: "{COMPONENT_NAME}"
+ComponentVersion: "{COMPONENT_VERSION}"
+ComponentDescription: AWS IoT Greengrass component to for my home treadmill measurements
+ComponentPublisher: "{COMPONENT_AUTHOR}"
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.ipc.mqttproxy:
+        com.nenadilic84.l:mqttproxy:1:
+          policyDescription: Allows access to subscribe to home/treadmill/speed topic
+          operations:
+            - aws.greengrass#PublishToIoTCore
+          resources:
+            - home/treadmill/speed
+Manifests:
+- Name: Linux
+  Platform:
+    os: linux
+  Artifacts:
+    - URI: "s3://BUCKET_NAME/COMPONENT_NAME/COMPONENT_VERSION/ggv2-home-treadmill.zip"
+      Unarchive: ZIP
+      Permission:
+        Execute: ALL
+        READ: ALL
+  Lifecycle:
+    Install:
+      RequiresPrivilege: true
+      Script: |-
+        python3 -m pip install -r {artifacts:decompressedPath}/ggv2-home-treadmill/requirements.txt
+    Run:
+      RequiresPrivilege: true
+      Script: |-
+        python3 -u {artifacts:decompressedPath}/ggv2-home-treadmill/src/measurements.py

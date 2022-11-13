@@ -1,0 +1,24 @@
+{
+    "targetArn": "arn:aws:iot:$AWS_REGION:$AWS_ACCOUNT_ID:thinggroup/home",
+    "deploymentName": "Deployment for home group",
+    "components": {
+        "com.nenadilic84.treadmill": {
+            "componentVersion": "$LATEST_COMPONENT_VERSION",
+            "runWith": {}
+        },
+        "aws.greengrass.Nucleus": {
+            "componentVersion": "2.8.1"
+        }
+    },
+    "deploymentPolicies": {
+        "failureHandlingPolicy": "ROLLBACK",
+        "componentUpdatePolicy": {
+            "timeoutInSeconds": 60,
+            "action": "NOTIFY_COMPONENTS"
+        },
+        "configurationValidationPolicy": {
+            "timeoutInSeconds": 60
+        }
+    },
+    "iotJobConfiguration": {}
+}

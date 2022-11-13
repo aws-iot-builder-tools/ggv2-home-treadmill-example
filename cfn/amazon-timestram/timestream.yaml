@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  HomeTreadmillRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: "HomeTreadmill"
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT speed FROM "home/treadmill/speed" WHERE speed>0
+        Actions:
+        - Timestream:
+            DatabaseName: "home-treadmill"
+            TableName: "measurments"
+            Dimensions: 
+            - Name: "speed"
+              Value: "${speed}"
+            RoleArn: !GetAtt HomeTreadmillTopicRuleRole.Arn
+  HomeTreadmillDB:
+    Type: AWS::Timestream::Database
+    Properties: 
+      DatabaseName: "home-treadmill"
+  HomeTreadmillTable:
+    Type: AWS::Timestream::Table
+    Properties: 
+      DatabaseName: !Ref HomeTreadmillDB
+      RetentionProperties:
+        MemoryStoreRetentionPeriodInHours: "24"
+        MagneticStoreRetentionPeriodInDays: "7"
+      TableName: "measurments"
+  HomeTreadmillTopicRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: AllowTimestream
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - timestream:WriteRecords
+                Resource:
+                  - !GetAtt HomeTreadmillTable.Arn
+              - Effect: Allow
+                Action:
+                  - timestream:DescribeEndpoints
+                Resource: "*"
