@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'GitHub OIDC:  nenadilic84/home-treadmill | Stack: oidc-nenadilic84/home-treadmill'
+Description: 'GitHub OIDC:  aws-iot-builder-tools/ggv2-home-treadmill-example| Stack: oidc-nenadilic84/home-treadmill'
 
 Parameters:
   FullRepoName:
     Type: String
-    Default: nenadilic84/home-treadmill
+    Default: aws-iot-builder-tools/ggv2-home-treadmill-example
   GreengrassThingGroupName:
     Type: String
     Default: home
