@@ -48,21 +48,32 @@ As for the CD part of using the Github Actions, I’ve followed the instruction 
 To recreate the Timestream Database and Table deploy the bellow stack:
 
 ```
-aws cloudformation deploy --template-file cfn/amazon-timestream/timestream.yaml --stack-name home-treadmill-timestream --capabilities CAPABILITY_IAM
+aws cloudformation deploy \
+  --template-file cfn/amazon-timestream/timestream.yaml \
+  --stack-name home-treadmill-timestream \
+  --capabilities CAPABILITY_IAM
 ```
 
 # Grafana
 
 First part to setting up Grafana is to create a role that has readonly access to Timestream
 ```
-aws cloudformation deploy --template-file cfn/grafana/grafana-role.yaml --stack-name grafana-role --capabilities CAPABILITY_IAM
+aws cloudformation deploy \
+  --template-file cfn/grafana/grafana-role.yaml \
+  --stack-name grafana-role \
+  --capabilities CAPABILITY_IAM
 
 aws cloudformation describe-stacks --stack-name grafana-role --query "Stacks[0].Outputs[0].OutputValue"
 ```
 This will give out an `arn` that will be used to create a Grafana workspace
 
 ```
-aws grafana create-workspace --account-access-type CURRENT_ACCOUNT --authentication-providers AWS_SSO --permission-type SERVICE_MANAGED --workspace-data-sources TIMESTREAM --workspace-role-arn <ARN from grafana-role stack>
+aws grafana create-workspace \
+  --account-access-type CURRENT_ACCOUNT \
+  --authentication-providers AWS_SSO \
+  --permission-type SERVICE_MANAGED \
+  --workspace-data-sources TIMESTREAM \
+  --workspace-role-arn <ARN from grafana-role stack>
 ```
 
 ## Security
